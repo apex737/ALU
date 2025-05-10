@@ -11,67 +11,47 @@ module tb_FPMUL;
     .MUL_o(MUL_o)
   );
 
-  // Internal signal monitor
-  wire signed [6:0] Exp     = uut.Exp;
-  wire        [4:0] DNshamt = uut.DNshamt;
-
-  initial begin
-    $display("Case |           A           |           B           |  Exp  | DNshamt |   MUL_o   | Category");
-    $display("-----+-----------------------+-----------------------+--------+---------+-----------+------------");
-
-    // -------- Norm × Norm Cases --------
-    // N1: OVF
-    opA_i = 16'b0_10100_1110000000;
-    opB_i = 16'b0_10011_1100000000;
-    #5; $display(" N1  | %h | %h | %4d  |    %2d   | %h | Norm×Norm→OVF", opA_i, opB_i, Exp, DNshamt, MUL_o);
-
-    // N2: Norm
-    opA_i = 16'b0_10001_0000000000;
-    opB_i = 16'b0_10000_0000000000;
-    #5; $display(" N2  | %h | %h | %4d  |    %2d   | %h | Norm×Norm→Norm", opA_i, opB_i, Exp, DNshamt, MUL_o);
-
-    // N3: Norm
-    opA_i = 16'b0_10000_1000000000;
-    opB_i = 16'b0_10001_0100000000;
-    #5; $display(" N3  | %h | %h | %4d  |    %2d   | %h | Norm×Norm→Norm", opA_i, opB_i, Exp, DNshamt, MUL_o);
-
-    // N4: Denorm
-    opA_i = 16'b0_10000_1000000000;
-    opB_i = 16'b0_01100_0000000000;
-    #5; $display(" N4  | %h | %h | %4d  |    %2d   | %h | Norm×Norm→Denorm", opA_i, opB_i, Exp, DNshamt, MUL_o);
-
-    // N5: UDF
-    opA_i = 16'b0_10000_1000000000;
-    opB_i = 16'b0_00000_0000000001;
-    #5; $display(" N5  | %h | %h | %4d  |    %2d   | %h | Norm×Norm→UDF", opA_i, opB_i, Exp, DNshamt, MUL_o);
-
-    // -------- Norm × Denorm Cases --------
-    // D1: UDF
-    opA_i = 16'b0_10000_1000000000;
-    opB_i = 16'b0_00000_0000000001;
-    #5; $display(" D1  | %h | %h | %4d  |    %2d   | %h | Norm×Denorm→UDF", opA_i, opB_i, Exp, DNshamt, MUL_o);
-
-    // D2: Norm
-    opA_i = 16'b0_10001_0000000000;
-    opB_i = 16'b0_00000_0010000000;
-    #5; $display(" D2  | %h | %h | %4d  |    %2d   | %h | Norm×Denorm→Norm", opA_i, opB_i, Exp, DNshamt, MUL_o);
-
-    // D3: Norm
-    opA_i = 16'b0_10000_1000000000;
-    opB_i = 16'b0_00000_0100000000;
-    #5; $display(" D3  | %h | %h | %4d  |    %2d   | %h | Norm×Denorm→Norm", opA_i, opB_i, Exp, DNshamt, MUL_o);
-
-    // D4: Denorm
-    opA_i = 16'b0_10000_1000000000;
-    opB_i = 16'b0_00000_0000010000;
-    #5; $display(" D4  | %h | %h | %4d  |    %2d   | %h | Norm×Denorm→Denorm", opA_i, opB_i, Exp, DNshamt, MUL_o);
-
-    // D5: Denorm
-    opA_i = 16'b0_10000_0100000000;
-    opB_i = 16'b0_00000_0000001000;
-    #5; $display(" D5  | %h | %h | %4d  |    %2d   | %h | Norm×Denorm→Denorm", opA_i, opB_i, Exp, DNshamt, MUL_o);
-
-    $finish;
-  end
+initial begin
+	// -------- Norm × Norm Cases --------
+	// N1: OVF
+	opA_i = 16'b0_11000_1110000000; 
+	opB_i = 16'b0_10111_1100000000; 
+	#5; 
+	// N2: Norm
+	opA_i = 16'b0_10001_0000000000;
+	opB_i = 16'b0_10000_0000000000;
+	#5; 
+	// N3: Norm
+	opA_i = 16'b0_10000_1000000000;
+	opB_i = 16'b0_10001_0100000000;
+	#5; 
+	// N4: Denorm
+	opA_i = 16'b0_10000_1000000000;
+	opB_i = 16'b0_01100_0000000000;
+	#5; 
+	// N5: UDF
+	opA_i = 16'b0_00111_1000000001;
+	opB_i = 16'b0_00000_0000000001;
+	#5; 
+	
+	// -------- Norm × Denorm Cases --------
+	// D1: Norm
+	opA_i = 16'b0_10001_0000000000;
+	opB_i = 16'b0_00000_0010000000;
+	#5; 
+	// D2: Norm
+	opA_i = 16'b0_10000_1000000000;
+	opB_i = 16'b0_00000_0100000000;
+	#5; 
+	// D3: Denorm
+	opA_i = 16'b0_10000_1000000000;
+	opB_i = 16'b0_00000_0000010000;
+	#5; 
+	// D4: Denorm
+	opA_i = 16'b0_10000_0100000000;
+	opB_i = 16'b0_00000_0000001000;
+	#5; 
+	$finish;
+end
 endmodule
 
