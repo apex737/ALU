@@ -12,20 +12,20 @@ wire [9:0] aF = opA_i[9:0];
 wire [9:0] bF = opB_i[9:0];
 reg Sign, isSub;
 wire isEqual = (aE == bE) & (aF == bF);
-// Sign 결정 
+// Sign
 always@* begin
-	if(aSign == bSign) begin // 부호 같은 경우 : 부호 유지 
+	if(aSign == bSign) begin 
 		Sign = aSign; 
 		isSub = 1'b0; 
 	end
-	else begin // 부호 다른 경우 : exp/frac이 더 큰 것을 따라감 
+	else begin 
 		isSub = 1'b1;	 
 		if(aE == bE) Sign = (aF > bF) ? aSign : bSign; 
 		else Sign = (aE > bE) ? aSign : bSign; 
 	end
 end
 
-// Big/Small Exp, Frac 결정
+// Big/Small Exp, Frac 
 reg signed [5:0] rs_bigExp, rs_smallExp;
 reg [11:0] r_bigF, r_smallF; // 01.ffffffffff (12bit)
 always@* begin
@@ -50,12 +50,12 @@ always@* begin
 			? { $signed({1'b0, aE}) - 6'sd15 , $signed({1'b0, bE}) - 6'sd15 }
 			: { $signed({1'b0, bE}) - 6'sd15 , $signed({1'b0, aE}) - 6'sd15 };
 		if(aE == bE) begin  
-			{r_bigF, r_smallF} = (aF > bF) // E가 같으면 F로 결정 
+			{r_bigF, r_smallF} = (aF > bF) 
 				? {{2'b01, aF}, {2'b01, bF}}
 				: {{2'b01, bF}, {2'b01, aF}};
 		end
 		else begin
-			{r_bigF, r_smallF} = (aE > bE) // r_bigF : 더 큰 E를 가진 Input의 Frac 
+			{r_bigF, r_smallF} = (aE > bE) 
 				? {{2'b01, aF}, {2'b01, bF}}
 				: {{2'b01, bF}, {2'b01, aF}};
 		end
@@ -71,11 +71,10 @@ wire [3:0] sh_Sub = 4'd12-idxSub; // 1 ~ 10
 LOD10 lodA (.frac(F_add[9:0]), .idx_o(idxAdd));
 LOD10 lodB (.frac(F_sub[9:0]), .idx_o(idxSub));
 
-// 정규화 
 reg signed [6:0] rs_Exp;
 reg [11:0] r_F;
 always@* begin
-	if(~isSub) begin // 부호 같음 (덧셈)
+	if(~isSub) begin 
 		if(F_add[11]) begin // M >= 2
 			r_F = F_add >> 1; // RShift
 			rs_Exp = rs_bigExp + 1;
@@ -89,7 +88,7 @@ always@* begin
 			r_F = F_add;
 		end
 	end
-	else begin // 부호 다름 (unsigned 뺄셈) 
+	else begin 
 		if(F_sub[11]) begin // M >= 2
 			r_F = F_sub >> 1; // RShift
 			rs_Exp = rs_bigExp + 1;
@@ -110,6 +109,7 @@ reg [4:0] DNshamt;
 reg [11:0] shifted;
 wire [4:0] E_Norm = rs_Exp + 7'sd15;
 always@* begin
+	DNshamt = 0; shifted = 0; 
 	if(isEqual & isSub) ADD_o = 0; // A - A 
 	else begin
 		if(rs_Exp > 7'sd15) ADD_o = {16{1'b1}}; // ovf
